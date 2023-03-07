@@ -32,12 +32,6 @@ int main(){
 
     int answer = get_int(":> ");
 
-    if(answer == 0){
-
-        return 1;
-
-    } //if
-
     if(answer == 1){
 
         string input = get_string("\ntype in  the text you want to encrypt\n\n:> ");
@@ -55,6 +49,12 @@ int main(){
         printf("\n");
 
     } //if
+    
+    else{
+        
+        return 1;
+        
+    }
 
 
 }
