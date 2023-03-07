@@ -7,7 +7,7 @@
 
 int check(); // to check that the string is not made up of only zeros
 
-int check_encryption; // its value is changed by get_encryption() the used by decrypt() to check if the file is empty
+int check_encryption; // its value is changed by get_encryption() then used by decrypt() to check if the file is empty
 
 void new_encryption(); // makes a new code
 
@@ -49,11 +49,11 @@ int main(){
         printf("\n");
 
     } //if
-    
+
     else{
-        
+
         return 1;
-        
+
     }//else
 
 
@@ -68,7 +68,7 @@ void new_encryption(){
 
     char alphabet[] = "abcdefghijklmnopqrstuvwxyz";
 
-    FILE* new_alpha = fopen("new alphabet","w");
+    FILE* new_alpha = fopen("new_alphabet","w");
 
     int not_similar = 0;
 
@@ -106,13 +106,13 @@ void get_encryption(char get_code[26]){
 
     char Code[26];
 
-    FILE* get_encrypt = fopen("new alphabet","r");
+    FILE* get_encrypt = fopen("new_alphabet","r");
 
     fread(Code,1,26,get_encrypt);
 
     if( *Code == -103 ){
 
-        printf("\nthe encryption is already used");
+        printf("\nthe file is empty");
 
         check_encryption = 1;
 
@@ -255,10 +255,10 @@ void decrypt(char* sentence){
 
     printf("\n");
 
-    FILE* file = fopen("new alphabet","w");
+    FILE* erase = fopen("new_alphabet","w");
 
-    fprintf(file,"");
+    fprintf(erase,"");
 
-    fclose(file);
+    fclose(erase);
 
 }
