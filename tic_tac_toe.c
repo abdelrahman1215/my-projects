@@ -6,7 +6,7 @@
 #include <cs50.h>
 
 
-char positions [3][3] = {"   ","   ","   "};
+char positions [3][3] = {"123","456","789"};
 bool first_turn = true;
 bool end_game = false;
 char player_char , computer_char;
@@ -45,7 +45,7 @@ void decide_turn(char player , int turn){
 void new_game(){
     draw_table();
     char first_play;
-    if(check_winner() == player_char || check_winner() == ' '){
+    if(check_winner() != computer_char){
         first_play = 'p';
     }
     else if(check_winner() == computer_char){
@@ -58,7 +58,7 @@ void new_game(){
         }
     }
     if(check_winner() == 'd'){
-        printf("draw!\n");
+        printf("it is a draw!\n");
     }
     char answer;
     clear();
@@ -106,9 +106,11 @@ void draw_table(){
 }
 
 void clear(){
+    int num = 0;
     for(int y = 0 ; y < 3 ; y++){
         for(int x = 0 ; x < 3 ; x++){
-            positions[y][x] = ' ';
+            positions[y][x] = num+49;
+            num++;
         }
     }
     first_turn = true;
@@ -134,6 +136,11 @@ char check_winner(){
             winner = positions[0][2];
             break;
         }
+        for(int x = 0 ; x < 3 ; x++){
+            if(positions[y][x] > 48 && positions[y][x] < 58){
+                winner = '0';
+            }
+        }
     }
     return winner;
 }
@@ -150,19 +157,77 @@ void player_turn(){
     if(player_char == 'x' || player_char == 'o'){
         player_char -= 32;
     }
-    int row = get_int("row : ");
-    int column = get_int("column : ");
-    if(row > 3 || column > 3 || row < 0 || column < 0){
-        printf("you can't place your turn in row : %i column : %i\n",row,column);
+    int cell = get_int("cell : ");
+    if(cell > 9 || cell < 0){
+        printf("you can't place your turn in cell : %i\n",cell);
         draw_table();
         return player_turn();
     }
-    if(positions[row - 1][column - 1] != ' '){
-        printf("you can't place your turn in row : %i column : %i\n",row,column);
-        draw_table();
-        return player_turn();
+    switch(cell){
+        case 1 : if(positions[cell/3][0] == 'X' || positions[cell/3][0] == 'O'){
+                    printf("you can't place your turn in cell : %i\n",cell);
+                    draw_table();
+                    return player_turn();
+                 }
+                 positions[cell/3][0] = player_char;
+                 break;
+        case 2 : if(positions[cell/3][1] == 'X' || positions[cell/3][1] == 'O'){
+                    printf("you can't place your turn in cell : %i\n",cell);
+                    draw_table();
+                    return player_turn();
+                 }
+                 positions[cell/3][1] = player_char;
+                 break;
+        case 3 : if(positions[(cell/3)-1][2] == 'X' || positions[(cell/3)-1][2] == 'O'){
+                    printf("you can't place your turn in cell : %i\n",cell);
+                    draw_table();
+                    return player_turn();
+                 }
+                 positions[(cell/3)-1][2] = player_char;
+                 break;
+        case 4 : if(positions[cell/3][0] == 'X' || positions[cell/3][0] == 'O'){
+                    printf("you can't place your turn in cell : %i\n",cell);
+                    draw_table();
+                    return player_turn();
+                 }
+                 positions[cell/3][0] = player_char;
+                 break;
+        case 5 : if(positions[cell/3][1] == 'X' || positions[cell/3][1] == 'O'){
+                    printf("you can't place your turn in cell : %i\n",cell);
+                    draw_table();
+                    return player_turn();
+                 }
+                 positions[cell/3][1] = player_char;
+                 break;
+        case 6 : if(positions[(cell/3)-1][2] == 'X' || positions[(cell/3)-1][2] == 'O'){
+                    printf("you can't place your turn in cell : %i\n",cell);
+                    draw_table();
+                    return player_turn();
+                 }
+                 positions[(cell/3)-1][2] = player_char;
+                 break;
+        case 7 : if(positions[cell/3][0] == 'X' || positions[cell/3][0] == 'O'){
+                    printf("you can't place your turn in cell : %i\n",cell);
+                    draw_table();
+                    return player_turn();
+                 }
+                 positions[2][0] = player_char;
+                 break;
+        case 8 : if(positions[cell/3][1] == 'X' || positions[cell/3][1] == 'O'){
+                    printf("you can't place your turn in cell : %i\n",cell);
+                    draw_table();
+                    return player_turn();
+                 }
+                 positions[2][1] = player_char;
+                 break;
+        case 9 : if(positions[(cell/3)-1][2] == 'X' || positions[(cell/3)-1][2] == 'O'){
+                    printf("you can't place your turn in cell : %i\n",cell);
+                    draw_table();
+                    return player_turn();
+                 }
+                 positions[(cell/3)-1][2] = player_char;
+                 break;
     }
-    positions[row - 1][column - 1] = player_char;
     draw_table();
     if(check_winner() == player_char){
         printf("the player wins\n");
@@ -194,7 +259,7 @@ void computer_turn(){
     }
 
     int row_ = rand() % 3 , column_ = rand() % 3;
-    if(positions[row_ ][column_] != ' '){
+    if(positions[row_ ][column_] == 'X' || positions[row_ ][column_] == 'O'){
         return computer_turn();
     }
     printf("computer turn : \n");
