@@ -7,9 +7,8 @@
 
 
 char positions [3][3] = {"123","456","789"};
-bool first_turn = true;
-bool end_game = false;
-int mode = 0;
+bool first_turn = true , end_game = false;
+int mode = 0 , difficulty = 3;
 char player_char , computer_char;
 void draw_table();
 void player_turn();
@@ -18,6 +17,7 @@ char check_winner();
 void new_game();
 void clear();
 void decide_turn(char player , int turn);
+void aware_choice();
 
 
 int main(){
@@ -45,9 +45,8 @@ void decide_turn(char player , int turn){
 
 void new_game(){
     while(mode < 1 || mode > 2){
-        mode = get_int("computer vs player (1)\nplayer vs player(2)\n\n:> ");
+        mode = get_int("\ncomputer vs player (1)\nplayer vs player (2)\n\n:> ");
     }
-    draw_table();
     if(mode == 2){
         for(int turn = 4 ; turn <= 13 ; turn++){
             if(end_game == true){
@@ -59,15 +58,22 @@ void new_game(){
                 case 'X' : player_char = 'O';
                            break;
             }
-            printf("player %i : \n",(turn % 2) + 1);
+            printf("\nplayer %i (%c) : \n",(turn % 2) + 1,player_char);
             player_turn();
             if(check_winner() == player_char){
-                printf("player %i wins !\n",(turn % 2) + 1);
+                printf("\nplayer %i wins !\n",(turn % 2) + 1);
+                end_game = true;
+            }
+            if(check_winner() == 'd'){
+                printf("\ndraw!\n");
                 end_game = true;
             }
         }
     }
     else{
+        do{
+            difficulty = get_int("\nchoose a difficulty \n\n1 is the hardest  3 is the easiest \n\n:> ");
+        }while(difficulty < 1 || difficulty > 3);
         char first_play;
         if(check_winner() != computer_char){
             first_play = 'p';
@@ -82,13 +88,13 @@ void new_game(){
             }
         }
         if(check_winner() == 'd'){
-            printf("it is a draw!\n");
+            printf("\nit is a draw!\n");
         }
     }
     char answer;
     clear();
     do{
-        answer = get_char("do you want to play a new game ( y / n ) : ");
+        answer = get_char("\ndo you want to play a new game ( y / n ) : ");
         if(answer == 'y' || answer == 'Y' || answer == 'n' || answer == 'N'){
         break;
         }
@@ -107,6 +113,7 @@ void new_game(){
 
 
 void draw_table(){
+    printf("\n");
     for(int y = 1 ; y < 10 ; y++){
         for(int x = 1 ; x < 18 ; x++){
             if(y % 3 == 0 && x % 6 != 0 && y != 9){
@@ -174,8 +181,12 @@ char check_winner(){
 
 
 void player_turn(){
+    if(mode == 1){
+        printf("\nplayer turn (%c) : \n\n",player_char);
+    }
+
     while(first_turn == true){
-        player_char = get_char("X or O ? ");
+        player_char = get_char("\nX or O ? ");
         if(player_char == 'X' || player_char == 'x' || player_char == 'O' || player_char == 'o'){
             first_turn = false;
         }
@@ -183,46 +194,45 @@ void player_turn(){
     if(player_char == 'x' || player_char == 'o'){
         player_char -= 32;
     }
-    int cell = get_int("cell : ");
-    if(cell > 9 || cell < 0){
-        printf("you can't place your turn in cell : %i\n",cell);
+    int cell;
+    do{
         draw_table();
-        return player_turn();
-    }
-    if(cell % 3 == 0 && cell >= 3){
-        if(positions[(cell/3)-1][2] == 'X' || positions[(cell/3)-1][2] == 'O'){
-            printf("you can't place your turn in cell : %i\n",cell);
-            draw_table();
-            return player_turn();
+        cell = get_int("\ncell : ");
+        if(positions[(cell/3)-((cell+3)%3 == 0)][((cell+3)%3)-1+3*((cell+3)%3 == 0)] == 'X' || positions[(cell/3)-((cell+3)%3 == 0)][((cell+3)%3)-1+3*((cell+3)%3 == 0)] == 'O'){
+            printf("cell %i is occupied",cell);
         }
-        positions[(cell/3)-1][2] = player_char;
-    }
-    else{
-        if(positions[cell/3][((cell+3)%3)-1] == 'X' || positions[cell/3][((cell+3)%3)-1] == 'O'){
-            printf("you can't place your turn in cell : %i\n",cell);
-            draw_table();
-            return player_turn();
+        if(cell > 9 || cell < 0 ){
+            printf("choose a cell from 1 to 9");
         }
-        positions[cell/3][((cell+3)%3)-1] = player_char;
-    }
+    }while(cell > 9 || cell < 0 || positions[(cell/3)-((cell+3)%3 == 0)][((cell+3)%3)-1+3*((cell+3)%3 == 0)] == 'X' || positions[(cell/3)-((cell+3)%3 == 0)][((cell+3)%3)-1+3*((cell+3)%3 == 0)] == 'O');
+    positions[(cell/3)-((cell+3)%3 == 0)][((cell+3)%3)-1+3*((cell+3)%3 == 0)] = player_char;
 
     draw_table();
     if(check_winner() == player_char && mode == 1){
-        printf("the player wins\n");
+        printf("\nthe player wins\n");
         end_game = true;
     }
 }
 
 
 
+void aware_choice(){
+    for(int y = 0 ; y < 3 ; y++){
+        for(int x = 0 ; x < 3 ; x++){
+
+        }
+    }
+}
+
+
 
 void computer_turn(){
     if(first_turn == true){
-        int x = (rand() % 3);
+        int x = rand() % 2;
         switch(x){
-            case 1  :     computer_char = 'X';
+            case 0  :     computer_char = 'X';
                           player_char = 'O';
-            case 2  :     computer_char = 'O';
+            case 1  :     computer_char = 'O';
                           player_char = 'X';
         }
         first_turn = false;
@@ -235,16 +245,15 @@ void computer_turn(){
                        break;
        }
     }
-
-    int row_ = rand() % 3 , column_ = rand() % 3;
-    if(positions[row_ ][column_] == 'X' || positions[row_ ][column_] == 'O'){
+    int row = rand() % 3 , column = rand() % 3;
+    if(positions[row][column] == 'X' || positions[row][column] == 'O'){
         return computer_turn();
     }
-    printf("computer turn : \n");
-    positions[row_][column_] = computer_char;
+    printf("\ncomputer turn (%c) : \n",computer_char);
+    positions[row][column] = computer_char;
     draw_table();
     if(check_winner() == computer_char){
-        printf("the computer wins\n");
+        printf("\nthe computer wins\n");
         end_game = true;
     }
 }
