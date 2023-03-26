@@ -114,7 +114,18 @@ void new_game(){
             }
             decide_turn(first_play,turn);
         }
-
+        if(check_winner() == player_char && mode == 1){
+            system("clear");
+            draw_table();
+            printf("\nthe player wins !\n");
+            end_game = true;
+        }
+        if(check_winner() == computer_char){
+            system("clear");
+            draw_table();
+            printf("\nthe computer wins !\n");
+            end_game = true;
+        }
         if(check_winner() == 'd'){
             system("clear");
             draw_table();
@@ -376,13 +387,13 @@ void aware_choice(){
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         //empty decision
         if(fr_row[index] >= 0){
-            mptrow = fr_row[rand()%row_arrsize];
+            mptrow = fr_row[rand()%(row_arrsize + 1)];
         }
         if(fr_col[index] >= 0){
-            mptcol = fr_col[rand()%col_arrsize];
+            mptcol = fr_col[rand()%(col_arrsize + 1)];
         }
         if(fr_row[index - (index == 2)] >= 0){
-            mptdiag = fr_diag[rand()%diag_arrsize];
+            mptdiag = fr_diag[rand()%(diag_arrsize + 1)];
         }
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -469,15 +480,19 @@ void aware_choice(){
     //incase there is one empty way.
     if(mptrow >= 0){
         square[mptrow][rand() % 3] = computer_char;
+        return;
     }
     if(mptcol >= 0){
         square[rand() % 3][mptcol] = computer_char;
+        return;
     }
     if(mptdiag == 0){
         square[rn][rn] = computer_char;
+        return;
     }
     if(mptdiag == 1){
         square[rn][2 - rn] = computer_char;
+        return;
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     //in case there is no all the above didn't work it will fill the first empty cell it encounters.
