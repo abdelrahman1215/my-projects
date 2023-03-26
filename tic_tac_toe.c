@@ -8,7 +8,6 @@
 
 char get_char(const char *format, ...) __attribute__((format(printf, 1, 2)));
 int get_int(const char *format, ...) __attribute__((format(printf, 1, 2)));
-void wait(int seconds);
 char square [3][3] = {"123","456","789"};
 bool first_turn = true , end_game = false;
 int mode = 0 , difficulty = 3;
@@ -26,12 +25,6 @@ void aware_choice();
 int main(){
     srand(time(NULL));
     new_game();
-}
-
-void wait(int seconds){
-    for(long start = time(NULL) , end = start ; end - start != seconds ; end = time(NULL)){
-        int x = 0;
-    }
 }
 
 
