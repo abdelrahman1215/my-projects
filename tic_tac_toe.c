@@ -472,6 +472,7 @@ void aware_choice(){
             }
         }
     }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
     //incase there is one empty way.
     if(mptrow >= 0){
         square[mptrow][rand() % 3] = computer_char;
