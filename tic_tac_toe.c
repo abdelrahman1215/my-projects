@@ -5,9 +5,9 @@
 #include <ctype.h>
 #include <stdarg.h>
 
-
-char get_char(const char *format, ...) __attribute__((format(printf, 1, 2)));
-int get_int(const char *format, ...) __attribute__((format(printf, 1, 2)));
+void wait(int seconds);
+char get_char(char * string);
+int get_int(char * string);
 char square [3][3] = {"123","456","789"};
 bool first_turn = true , end_game = false;
 int mode = 0 , difficulty = 3;
@@ -25,6 +25,26 @@ void aware_choice();
 int main(){
     srand(time(NULL));
     new_game();
+}
+
+
+void wait(int seconds){
+    for(long start = time(NULL) , end = time(NULL) ; end - start != seconds ; end = time(NULL)){
+    }
+}
+char get_char(char * string){
+    printf("%s",string);
+    char input;
+    do{
+        input = getchar();
+    }while(input == '\n');
+    return input;
+}
+int get_int(char * string){
+    int input;
+    printf("%s",string);
+    scanf("%i",&input);
+    return input;
 }
 
 
@@ -49,10 +69,10 @@ void decide_turn(char player , int turn){
 
 void new_game(){
     while(mode < 1 || mode > 2){
-        system("clear");
+        system("cls");
         mode = get_int("\nplayer vs computer (1)\n\nplayer vs player   (2)\n\n:> ");
     }
-    system("clear");
+    system("cls");
     if(mode == 2){
         for(int turn = 4 ; turn <= 13 ; turn++){
             if(end_game == true){
@@ -64,10 +84,10 @@ void new_game(){
                 case 'X' : player_char = 'O';
                            break;
             }
-            system("clear");
+            system("cls");
             printf("\nplayer %i (%c) : \n",(turn % 2) + 1,player_char);
             player_turn();
-            system("clear");
+            system("cls");
             if(check_winner() == player_char){
                 draw_table();
                 printf("\nplayer %i wins !\n",(turn % 2) + 1);
@@ -81,11 +101,11 @@ void new_game(){
     }
     else{
         do{
-            system("clear");
+            system("cls");
             difficulty = get_int("\nchoose a difficulty \n\n1 is the easiest  4 is the hardest \n\n:> ");
         }while(difficulty < 1 || difficulty > 4);
         difficulty = 5 - difficulty;
-        system("clear");
+        system("cls");
         char first_play;
         if(check_winner() != computer_char){
             first_play = 'p';
@@ -95,13 +115,13 @@ void new_game(){
         }
         for(int turn = 0 ; turn < 9 ; turn++){
             if(check_winner() == player_char && mode == 1){
-                system("clear");
+                system("cls");
                 draw_table();
                 printf("\nthe player wins !\n");
                 end_game = true;
             }
             if(check_winner() == computer_char){
-                system("clear");
+                system("cls");
                 draw_table();
                 printf("\nthe computer wins !\n");
                 end_game = true;
@@ -110,24 +130,24 @@ void new_game(){
                 break;
             }
             if(end_game == false){
-                system("clear");
+                system("cls");
             }
             decide_turn(first_play,turn);
         }
         if(check_winner() == player_char && mode == 1){
-            system("clear");
+            system("cls");
             draw_table();
             printf("\nthe player wins !\n");
             end_game = true;
         }
         if(check_winner() == computer_char){
-            system("clear");
+            system("cls");
             draw_table();
             printf("\nthe computer wins !\n");
             end_game = true;
         }
         if(check_winner() == 'd'){
-            system("clear");
+            system("cls");
             draw_table();
             printf("\nit is a draw!\n");
         }
@@ -135,6 +155,7 @@ void new_game(){
     char answer;
     clear();
     do{
+        wait(1);
         answer = get_char("\ndo you want to play a new game ( y / n ) : ");
         if(answer == 'y' || answer == 'Y' || answer == 'n' || answer == 'N'){
             break;
@@ -147,9 +168,9 @@ void new_game(){
     case 'Y' : end_game = false;
                new_game();
                break;
-    case 'n' : system("clear");
+    case 'n' : system("cls");
                return;
-    case 'N' : system("clear");
+    case 'N' : system("cls");
                return;
     }
 }
@@ -224,8 +245,18 @@ char check_winner(){
 
 
 void player_turn(){
+    char computer_turns[3][3] = {"   ","   ","   "};
+    int played_cell;
     if(mode == 1 && first_turn == false  ){
-        printf("\nplayer turn (%c) : \n\n",player_char);
+        for(int i = 0 ; i < 3 ; i++){
+            for(int j = 0 ; j < 3 ; j++){
+                if(square[i][j] == computer_char && computer_turns[i][j] != computer_char){
+                    computer_turns[i][j] = computer_char;
+                    played_cell = (i*3)+j+1;
+                }
+            }
+        }
+        printf("computer(%c) took cell no. %i",computer_char,played_cell);
     }
 
     while(first_turn == true){
@@ -233,7 +264,7 @@ void player_turn(){
         if(player_char == 'X' || player_char == 'x' || player_char == 'O' || player_char == 'o'){
             first_turn = false;
         }
-        system("clear");
+        system("cls");
     }
     if(player_char == 'x' || player_char == 'o'){
         player_char -= 32;
@@ -242,15 +273,15 @@ void player_turn(){
     do{
         draw_table();
         cell = get_int("\ncell : ");
-        if(square[(int)(cell/3)-((cell+3)%3 == 0)][((cell+3)%3)-1+3*((cell+3)%3 == 0)] == 'X' || square[(int)(cell/3)-((cell+3)%3 == 0)][((cell+3)%3)-1+3*((cell+3)%3 == 0)] == 'O'){
-            system("clear");
+        if(square[((cell - 1)/3)][((cell+2)%3)] == 'X' || square[(int)((cell - 1)/3)][((cell+2)%3)] == 'O'){
+            system("cls");
             printf("cell %i is occupied\n",cell);
         }
         if(cell > 9 || cell < 0 ){
-            system("clear");
+            system("cls");
             printf("choose a cell from 1 to 9\n");
         }
-    }while(cell > 9 || cell < 0 || square[(cell/3)-((cell+3)%3 == 0)][((cell+3)%3)-1+3*((cell+3)%3 == 0)] == 'X' || square[(cell/3)-((cell+3)%3 == 0)][((cell+3)%3)-1+3*((cell+3)%3 == 0)] == 'O');
+    }while(cell > 9 || cell < 0 || square[((cell - 1)/3)][((cell+2)%3)] == 'X' || square[(int)((cell - 1)/3)][((cell+2)%3)] == 'O');
     square[(int)((cell-1)/3)][(int)((cell+2)%3)] = player_char;
 
     draw_table();
@@ -262,9 +293,9 @@ void aware_choice(){
     int row_fl[] = {0,0,0} , row_blk[] = {0,0,0} , fr_row[] = {-1,-1,-1};
     int col_fl[] = {0,0,0} , col_blk[] = {0,0,0} , fr_col[] = {-1,-1,-1};
     int diag_fl[] = {0,0} , diag_blk[] = {0,0} , fr_diag[] = {-1,-1};
-    int rowtfl = -1 , rowtblk = -1 , mptrow = -1 , row_arrsize = 0;
-    int coltfl = -1 , coltblk = -1 , mptcol = -1 , col_arrsize = 0;
-    int diagtfl = -1 , diagtblk = -1 , mptdiag = -1 , diag_arrsize = 0;
+    int rowtfl = -1 , rowtblk = -1 , mptrow = -1 , row_arrsize = -1;
+    int coltfl = -1 , coltblk = -1 , mptcol = -1 , col_arrsize = -1;
+    int diagtfl = -1 , diagtblk = -1 , mptdiag = -1 , diag_arrsize = -1;
     if(first_turn == true){
         square[rand()%3][rand()%3] = computer_char;
         return;
@@ -386,14 +417,14 @@ void aware_choice(){
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         //empty decision
-        if(fr_row[index] >= 0){
-            mptrow = fr_row[rand()%(row_arrsize + 1)];
+        if(fr_row[index] >= 0 && row_arrsize > 0){
+            mptrow = fr_row[rand()%row_arrsize];
         }
-        if(fr_col[index] >= 0){
-            mptcol = fr_col[rand()%(col_arrsize + 1)];
+        if(fr_col[index] >= 0 && col_arrsize > 0){
+            mptcol = fr_col[rand()%col_arrsize];
         }
-        if(fr_row[index - (index == 2)] >= 0){
-            mptdiag = fr_diag[rand()%(diag_arrsize + 1)];
+        if(fr_row[index - (index == 2)] >= 0 &&diag_arrsize > 0){
+            mptdiag = fr_diag[rand()%diag_arrsize];
         }
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -538,6 +569,6 @@ void computer_turn(){
             arr_size++;
         }
     }
-    int cell = empty_cells[rand()%(arr_size + 1)];
+    int cell = empty_cells[rand()% (arr_size + (arr_size == 0))];
     square[cell/3][(cell+3)%3] = computer_char;
 }
