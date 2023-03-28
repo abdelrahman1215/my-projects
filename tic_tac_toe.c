@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 
+
 void wait(int seconds);
 char get_char(char * string);
 int get_int(char * string);
