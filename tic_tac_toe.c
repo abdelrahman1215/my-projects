@@ -2,32 +2,35 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
-#include <ctype.h>
-#include <conio.h>
 #include <windows.h>
 
 
 
 char get_char(char * string);
 int get_int(char * string);
+
+
+int mode = 0 , difficulty;
 char square [3][3] = {"123","456","789"};
 bool first_turn = true , end_game = false;
-int mode = 0 , difficulty;
 char computer_char, player_char;
-void draw_table();
-void player_turn();
-void computer_turn();
-char check_winner();
+
+
 void new_game();
+void draw_table();
 void clear();
 void decide_turn(char player , int turn);
+char check_winner();
+
+
+void player_turn();
 void aware_choice();
+void computer_turn();
 
 
 int main(){
     new_game();
 }
-
 
 
 char get_char(char * string){
@@ -154,7 +157,7 @@ void new_game(){
         char answer;
         clear();
         do{
-            wait(1);
+           Sleep(2000);
             answer = get_char("\ndo you want to play a new game ( y / n ) : ");
             if(answer == 'y' || answer == 'Y' || answer == 'n' || answer == 'N'){
                 break;
