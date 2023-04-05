@@ -3,15 +3,16 @@
 #include <stdlib.h>
 #include <time.h>
 #include <ctype.h>
-#include <stdarg.h>
+#include <conio.h>
+#include <windows.h>
 
 
-void wait(int seconds);
+
 char get_char(char * string);
 int get_int(char * string);
 char square [3][3] = {"123","456","789"};
 bool first_turn = true , end_game = false;
-int mode = 0 , difficulty = 3;
+int mode = 0 , difficulty;
 char computer_char, player_char;
 void draw_table();
 void player_turn();
@@ -24,26 +25,22 @@ void aware_choice();
 
 
 int main(){
-    srand(time(NULL));
     new_game();
 }
 
 
-void wait(int seconds){
-    for(long start = time(NULL) , end = time(NULL) ; end - start != seconds ; end = time(NULL)){
-    }
-}
+
 char get_char(char * string){
-    printf("%s",string);
     char input;
+    printf("%s",string);
     do{
         input = getchar();
     }while(input == '\n');
     return input;
 }
 int get_int(char * string){
-    int input;
     printf("%s",string);
+    int input;
     scanf("%i",&input);
     return input;
 }
@@ -69,6 +66,7 @@ void decide_turn(char player , int turn){
 
 
 void new_game(){
+    srand(time(NULL));
     while(mode < 1 || mode > 2){
         system("cls");
         mode = get_int("\nplayer vs computer (1)\n\nplayer vs player   (2)\n\n:> ");
@@ -128,7 +126,7 @@ void new_game(){
                 end_game = true;
             }
             if(end_game == true){
-                break;
+                goto ask;
             }
             if(end_game == false){
                 system("cls");
@@ -139,13 +137,11 @@ void new_game(){
             system("cls");
             draw_table();
             printf("\nthe player wins !\n");
-            end_game = true;
         }
         if(check_winner() == computer_char){
             system("cls");
             draw_table();
             printf("\nthe computer wins !\n");
-            end_game = true;
         }
         if(check_winner() == 'd'){
             system("cls");
@@ -153,32 +149,42 @@ void new_game(){
             printf("\nit is a draw!\n");
         }
     }
-    char answer;
-    clear();
-    do{
-        wait(1);
-        answer = get_char("\ndo you want to play a new game ( y / n ) : ");
-        if(answer == 'y' || answer == 'Y' || answer == 'n' || answer == 'N'){
-            break;
-        }
-    }while(answer != 0);
-    switch(answer){
-    case 'y' : end_game = false;
-               new_game();
-               break;
-    case 'Y' : end_game = false;
-               new_game();
-               break;
-    case 'n' : system("cls");
-               return;
-    case 'N' : system("cls");
-               return;
+    ask :
+    {
+        char answer;
+        clear();
+        do{
+            wait(1);
+            answer = get_char("\ndo you want to play a new game ( y / n ) : ");
+            if(answer == 'y' || answer == 'Y' || answer == 'n' || answer == 'N'){
+                break;
+            }
+        }while(answer != 0);
+        switch(answer){
+            case 'y' : end_game = false;
+                       new_game();
+                       break;
+            case 'Y' : end_game = false;
+                       new_game();
+                       break;
+            case 'n' : system("cls");
+                       printf("bye !");
+                       Sleep(1500);
+                       system("cls");
+                       return;
+            case 'N' : system("cls");
+                       printf("bye !");
+                       Sleep(1500);
+                       system("cls");
+                       return;
+    }
     }
 }
 
 
 void draw_table(){
     printf("\n");
+    int sleep = 25;
     for(int y = 1 ; y < 10 ; y++){
         for(int x = 1 ; x < 18 ; x++){
             if(y % 3 == 0 && x % 6 != 0 && y != 9){
@@ -186,7 +192,7 @@ void draw_table(){
             }
             if(x % 6 == 0){
                 printf("|");
-                continue;
+                goto sleep;
             }
             if((y + 1) % 3 == 0 && (x + 3) % 6 == 0){
                 printf("%c",square[(int)(((y + 1) / 3)) - 1][(int)((x - 3) / 6)]);
@@ -196,6 +202,10 @@ void draw_table(){
             }
             else if(y == 9 && x % 6 != 0){
                 printf(" ");
+            }
+            sleep:
+            if(first_turn == true){
+                Sleep(sleep);
             }
         }
         printf("\n");
@@ -260,11 +270,8 @@ void player_turn(){
         printf("computer(%c) took cell no. %i",computer_char,played_cell);
     }
 
-    while(first_turn == true){
+    while(player_char != 'X' && player_char != 'x' && player_char != 'O' && player_char != 'o'){
         player_char = get_char("\nX or O ? ");
-        if(player_char == 'X' || player_char == 'x' || player_char == 'O' || player_char == 'o'){
-            first_turn = false;
-        }
         system("cls");
     }
     if(player_char == 'x' || player_char == 'o'){
@@ -284,8 +291,12 @@ void player_turn(){
         }
     }while(cell > 9 || cell < 0 || square[((cell - 1)/3)][((cell+2)%3)] == 'X' || square[(int)((cell - 1)/3)][((cell+2)%3)] == 'O');
     square[(int)((cell-1)/3)][(int)((cell+2)%3)] = player_char;
-
-    draw_table();
+    first_turn = false;
+    Sleep(500);
+    for(int i = 0 ; i < 4 && mode == 1 ; i++){
+        printf(">");
+        Sleep(500);
+    }
 }
 
 
@@ -385,21 +396,21 @@ void aware_choice(){
             rowtfl = index;
             if(row_fl[index] >= 2){
                 coltfl = -1,diagtfl = -1;
-                goto fill_excution;
+                goto fill_execution;
             }
         }
         if(col_fl[index] >= 1){
             coltfl = index;
             if(col_fl[index] >= 2){
                 rowtfl = -1,diagtfl = -1;
-                goto fill_excution;
+                goto fill_execution;
             }
         }
         if(diag_fl[index - (index == 2)] >= 1){
             diagtfl = index - (index == 2);
             if(diag_fl[index] >= 2){
                 rowtfl = -1,coltfl = -1;
-                goto fill_excution;
+                goto fill_execution;
             }
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -429,8 +440,11 @@ void aware_choice(){
         }
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //excution section.
-    //blocking excution
+    //execution section.
+    //blocking_execution
+    if(difficulty == 4 || rand() % (difficulty - (difficulty != 1)) != 0){
+        goto fill_execution;
+    }
     for(int i = 0 ; i < 3 ; i++){
         if(rowtblk >= 0 && square[rowtblk][i] <= '9'){
             square[rowtblk][i] = computer_char;
@@ -449,98 +463,123 @@ void aware_choice(){
             return;
         }
     }
+    
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //filling excution
-    fill_excution :
-    for(int i = 0 ; i < 3 ; i++){
-        if(rowtfl >= 0 && square[rowtfl][i] <= '9'){
-            square[rowtfl][i] = computer_char;
-            return;
+    //filling execution
+    fill_execution : {
+        if(rand() %  (difficulty - (difficulty != 1)) > 1){
+            goto empty_execution;
         }
-        if(coltfl >= 0 && square[i][coltfl] <= '9'){
-            square[i][coltfl] = computer_char;
-            return;
-        }
-        if(diagtfl == 0 && square[i][i] <= '9'){
-            square[i][i] = computer_char;
-            return;
-        }
-        if(diagtfl == 1 && square[i][2 - i] <= '9'){
-            square[i][2 - i] = computer_char;
-            return;
-        }
-    }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //empty excution
-    //in case there is more than one empty way.
-    int r = -1;
-    int rn = rand()%3;
-    if(mptrow >= 0 && mptcol >= 0 && mptdiag >= 0){
-        r = rand() % 3;
-        goto excute;
-    }
-    if(mptrow >= 0 && mptcol >= 0){
-        r = rand() % 2;
-    }
-    if(mptrow >= 0 && mptdiag >= 0){
-        r = rand() % 2;
-        r += (r == 1);
-    }
-    if(mptdiag >= 0 && mptcol >= 0){
-        r = (rand() % 2) + 1;
-    }
-    excute :
-    {
-        if(r >= 0){
-            switch(r){
-                case 0 : square[mptrow][rand()%3] = computer_char;
-                         return;
-                case 1 : square[rand()%3][mptcol] = computer_char;
-                         return;
-                case 2 : if(mptdiag == 0){
-                            square[rn][rn] = computer_char;
-                            return;
-                         }
-                         if(mptdiag == 1){
-                            square[rn][2 - rn] = computer_char;
-                            return;
-                         }
+        for(int i = 0 ; i < 3 ; i++){
+            if(rowtfl >= 0 && square[rowtfl][i] <= '9'){
+                square[rowtfl][i] = computer_char;
+                return;
             }
-        }
-    }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //incase there is one empty way.
-    if(mptrow >= 0){
-        square[mptrow][rand() % 3] = computer_char;
-        return;
-    }
-    if(mptcol >= 0){
-        square[rand() % 3][mptcol] = computer_char;
-        return;
-    }
-    if(mptdiag == 0){
-        square[rn][rn] = computer_char;
-        return;
-    }
-    if(mptdiag == 1){
-        square[rn][2 - rn] = computer_char;
-        return;
-    }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //in case there is no all the above didn't work it will fill the first empty cell it encounters.
-    for(int i = 0 ; i < 3 ; i++){
-        for(int j = 0 ; j < 3 ; j++){
-            if(square[i][j] <= '9'){
-                square[i][j] = computer_char;
+            if(coltfl >= 0 && square[i][coltfl] <= '9'){
+                square[i][coltfl] = computer_char;
+                return;
+            }
+            if(diagtfl == 0 && square[i][i] <= '9'){
+                square[i][i] = computer_char;
+                return;
+            }
+            if(diagtfl == 1 && square[i][2 - i] <= '9'){
+                square[i][2 - i] = computer_char;
                 return;
             }
         }
+    }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    empty_execution : {
+        //in case there is more than one empty way.
+        if(difficulty == 4 || rand() % difficulty != 0){
+            goto last_hope;
+        }
+        int r = -1;
+        int rn = rand()%3;
+        if(mptrow >= 0 && mptcol >= 0 && mptdiag >= 0){
+            r = rand() % 3;
+            goto excute;
+        }
+        if(mptrow >= 0 && mptcol >= 0){
+            r = rand() % 2;
+        }
+        if(mptrow >= 0 && mptdiag >= 0){
+            r = rand() % 2;
+            r += (r == 1);
+        }
+        if(mptdiag >= 0 && mptcol >= 0){
+            r = (rand() % 2) + 1;
+        }
+        excute :
+        {
+            if(r >= 0 ){
+                switch(r){
+                    case 0 : square[mptrow][rand()%3] = computer_char;
+                             return;
+                    case 1 : square[rand()%3][mptcol] = computer_char;
+                             return;
+                    case 2 : if(mptdiag == 0){
+                                square[rn][rn] = computer_char;
+                                return;
+                             }
+                             if(mptdiag == 1){
+                                square[rn][2 - rn] = computer_char;
+                                return;
+                             }
+                }
+            }
+        }
+        //incase there is one empty way.
+        if(mptrow >= 0 ){
+            square[mptrow][rand() % 3] = computer_char;
+            return;
+        }
+        if(mptcol >= 0 ){
+            square[rand() % 3][mptcol] = computer_char;
+            return;
+        }
+        if(mptdiag == 0){
+            square[rn][rn] = computer_char;
+            return;
+        }
+        if(mptdiag == 1 ){
+            square[rn][2 - rn] = computer_char;
+            return;
+        }
+    }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //in case there is no all the above didn't work it will fill the first empty cell it encounters.
+    last_hope : {
+        
+        int empty_cells[]={0,0,0,0,0,0,0,0,0};
+        int arr_size = 0;
+        for(int cell = 0 ; cell < 9 ; cell++){
+            if(square[cell/3][(cell+3)%3] <= '9'){
+                if(difficulty == 4 && row_blk[cell/3] > 1 && col_blk[(cell+3)%3] > 1 && diag_blk[(cell/3) != ((cell+3)%3)] > 1){
+                    if(difficulty == 4){
+                        if(row_blk[cell/3] == 2 || col_blk[(cell+3)%3] == 2 || cell == 4 || diag_blk[cell < 8 && cell%2 == 0] == 2){
+                            continue;
+                        }
+                    }
+                    empty_cells[arr_size] = cell + 9;
+                    arr_size++;
+                    continue;
+                }
+                empty_cells[arr_size] = cell;
+                arr_size++;
+            }
+        }
+        int cell = empty_cells[rand() % arr_size ];
+        if(cell >= 9 && arr_size == 1){
+            square[(cell-9)/3][(cell-6)%3] = computer_char;
+        }
+        square[cell/3][(cell+3)%3] = computer_char;
     }
 }
 
 
 void computer_turn(){
-    int empty_cells[]={0,0,0,0,0,0,0,0,0};
     if(first_turn == true){
         int x = rand() % 2;
         switch(x){
@@ -549,7 +588,6 @@ void computer_turn(){
             case 1  :     computer_char = 'O';
                           player_char = 'X';
         }
-        first_turn = false;
     }
     else{
        switch(player_char){
@@ -559,17 +597,6 @@ void computer_turn(){
                        break;
        }
     }
-    if((rand() % difficulty) == 0){
-        aware_choice();
-        return;
-    }
-    int arr_size = 0;
-    for(int cell = 0 ; cell < 9 ; cell++){
-        if(square[cell/3][(cell+3)%3] <= '9'){
-            empty_cells[arr_size] = cell;
-            arr_size++;
-        }
-    }
-    int cell = empty_cells[rand()% (arr_size + (arr_size == 0))];
-    square[cell/3][(cell+3)%3] = computer_char;
+    aware_choice();
+    first_turn = false;
 }
