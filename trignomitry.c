@@ -41,7 +41,7 @@ float power (float number , float indice){
 
 
 float sine(float angle){
-    angle = pi * ((angle + 360) % 360) / 180;
+    angle = pi * ((int)(angle + 360) % 360) / 180;
     float sin = 0.0;
     for(int i = 1 , x = 1; i <= 24 ; i++ , x += 2){
         float power_series = power(angle,x)/factorial(x);
