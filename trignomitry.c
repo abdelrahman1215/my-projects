@@ -17,7 +17,7 @@ int main(){
 
 
 float factorial(float number){
-    if (number == 0 || number == 1){
+    if (number == 0){
         return 1;
     }
     for(int next = number - 1 ; next >= 1 ; next--){
@@ -29,25 +29,19 @@ float factorial(float number){
 
 
 float power (float number , float indice){
-    if(indice == 0){
-        return 1;
+    float result = 1;
+    for(int times = 0 ; times < indice ; times++){
+        result *= number;
     }
-    float tmp = number;
-    for(int times = 1 ; times < indice ; times++){
-        number *= tmp;
-    }
-    return number;
+    return result;
 }
 
 
+#define pi 3.14159265
+
 
 float sine(float angle){
-    if(angle > 360){
-        int x = angle/360;
-        float y = angle/360;
-        angle = (y - x) * 360;
-    }
-    angle = 3.14159265 * (angle / 180.0);
+    angle = pi * ((angle + 360) % 360) / 180;
     float sin = 0.0;
     for(int i = 1 , x = 1; i <= 24 ; i++ , x += 2){
         float power_series = power(angle,x)/factorial(x);
@@ -64,15 +58,13 @@ float sine(float angle){
 
 
 float cosine(float angle){
-    float cos = root(1.0 - power(sine(angle),2));
-    return cos;
+    return  root(1.0 - power(sine(angle),2));
 }
 
 
 
 float tangent(float angle){
-    float tan = sine(angle)/cosine(angle);
-    return tan;
+    return sine(angle)/cosine(angle);
 }
 
 
