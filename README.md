@@ -1,2 +1,2 @@
-# my-projects
+# my projects
 a repository to save my projects
