@@ -432,8 +432,11 @@ void quit(){
     }
 
     system("cls");
-    while(fopen(name_of_swap,"r") != NULL){
+    int  i = 0;
+    for(FILE *try = fopen(name_of_swap,"r") ; try != NULL && i < 10 ; try = fopen(name_of_swap,"r")){
+        fclose(try);
         remove(name_of_swap);
+        i++;
     }
     exit(0);
 }
@@ -656,8 +659,10 @@ void update_line_map(){
     FILE * copier = fopen(swap_name,"r");
     FILE * tell_size = fopen(swap_name,"r");
 
-    fseek(tell_size,0,SEEK_END);
-    size_t file_size = ftell(tell_size) - 2;
+    size_t file_size = 0;
+    for(char i = fgetc(tell_size) ; i != EOF ; i = fgetc(tell_size)){
+        file_size ++;
+    }
 
     fclose(tell_size);
 
@@ -753,6 +758,7 @@ char * line(int line_number){
     FILE * copier = fopen(swap_name,"r");
 
     if(line_number > line_max){
+        fclose(copier);
         return "";
     }
 
@@ -775,6 +781,7 @@ char * line(int line_number){
     }
 
     if(line_start == -1){
+        fclose(copier);
         return "";
     }
 
@@ -863,8 +870,12 @@ void load_file(char * file_name){
     }
 
     if(file == NULL){
-        printf("this file doesn't exist\n");
-        quit();
+        fclose(file);
+        file = fopen(file_name , "w");
+        fclose(file);
+        title();
+        create_swap(file_name);
+        fclose(file);
     }
 
     fseek(file , 0L , SEEK_END);
@@ -1146,7 +1157,6 @@ void add(char c , long line_to_edit , long position){
 
 
 void delete(long line_to_edit , long position){
-
     for(node *i = line_map ; i != NULL ; i = i -> next){
         if(i -> line_no == line_to_edit){
             position += i -> line_start;
@@ -1155,13 +1165,24 @@ void delete(long line_to_edit , long position){
     }
 
     FILE *get = fopen(swap_name,"r");
+    FILE *get_size = fopen(swap_name,"r");
     fseek(get , 0L , SEEK_END);
 
     size_t size = ftell(get);
 
     fseek(get , 0L , SEEK_SET);
 
+    size = 0;
+
+    for(char i = fgetc(get_size) ; i != EOF ; i = fgetc(get_size)){
+        size ++;
+    }
+    fclose(get_size);
+
     char text[size];
+    for(size_t i = 0 ; i < size ; i++){
+        text[i] = 0;
+    }
 
     position -= line_to_edit * (preview_cursor.x + line_indentation == 0);
 
@@ -1169,15 +1190,12 @@ void delete(long line_to_edit , long position){
         fread(text,1,position,get);
     }
 
+    text[size - 1] = 0;
+
     position += line_to_edit * (preview_cursor.x + line_indentation == 0);
 
     fseek(get , (long)position + 1 , SEEK_SET);
-    fread(&text[position - line_to_edit],1,(size - position) - 1,get);    
-    if(size > 100){
-        text[size - 11] = 0;
-    }else{
-        text[size] = 0;
-    }
+    fread(&text[position - line_to_edit],1,(size - position) - 1,get);
 
     fclose(get);
 
