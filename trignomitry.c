@@ -10,7 +10,7 @@ float cosine(float angle);
 int main(){
     float angle;
     printf("type in the angle : ");
-    scanf("%f",&angle);
+    scanf_s("%f",&angle);
     printf("sin : %.5f\ncos : %.5f\ntan : %.5f\n",sine(angle),cosine(angle),tangent(angle));
 }
 

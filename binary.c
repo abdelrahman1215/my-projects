@@ -6,7 +6,7 @@ int main(){
 
     printf("type in a number less than 256\n\n   :> ");
 
-    scanf("%i",&user_input);
+    scanf_s("%i",&user_input);
 
     printf("\n");
 
@@ -34,4 +34,5 @@ int main(){
 
     printf("\n");
 
+    return 0;
 }

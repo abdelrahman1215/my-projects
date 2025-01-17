@@ -5,26 +5,25 @@ int main(){
 
     printf("start? : ");
 
-    scanf("%i",&start);
+    scanf_s("%i",&start);
 
     int end;
 
     printf("end? : ");
 
-    scanf("%i",&end);
+    scanf_s("%i",&end);
 
     int temp;
-
-    FILE* file = fopen("fibonacci series.txt","w");
 
     for(int i = 0;start <= end;i = temp){
 
         temp = start;
 
-        fprintf(file,"%.i\n",start);
+        printf("%i\n",start);
 
         start += i;
 
     }
 
+    return 0;
 }
